@@ -1,17 +1,18 @@
-import type { ToolName } from "./tool-definItion";
 import { Tools } from "./tools";
 
 export const getHandler = (tools: Tools) => ({
-  read_file: (args: any) => {
+  read_file: async (args: any): Promise<string> => {
     return tools.readFile(args.filePath);
   },
-  write_file: (args: any) => {
-    tools.writeFile(args.filePath, args.content);
+  write_file: async (args: any): Promise<string> => {
+    await tools.writeFile(args.filePath, args.content);
+    return `Wrote file: ${args.filePath}`;
   },
-  replace_block: (args: any) => {
-    tools.replaceBlock(args.filePath, args.oldContent, args.newContent);
+  replace_block: async (args: any): Promise<string> => {
+    await tools.replaceBlock(args.filePath, args.oldContent, args.newContent);
+    return `Updated file: ${args.filePath}`;
   },
-  bash: (args: any) => {
+  bash: async (args: any): Promise<string> => {
     return tools.bash(args.command);
   },
 });

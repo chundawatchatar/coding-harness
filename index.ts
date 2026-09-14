@@ -11,6 +11,11 @@ const client = new OpenAI({
 
 const tools = new Tools();
 
+const hasOwnKey = <T extends object>(
+  object: T,
+  key: PropertyKey,
+): key is keyof T => Object.prototype.hasOwnProperty.call(object, key);
+
 const SYSTEM_PROMPT =
   "You are a coding agent and your job is to code and always code";
 const userPrompt = prompt("What do you want:");
@@ -65,7 +70,7 @@ for (const item of items) {
     let toolResult = "";
     const toolHandlers = getHandler(tools);
 
-    if (toolName in toolHandlers) {
+    if (hasOwnKey(toolHandlers, toolName)) {
       toolResult = await toolHandlers[toolName](toolArgs);
     } else {
       toolResult = `Unknown tool: ${toolName}`;
