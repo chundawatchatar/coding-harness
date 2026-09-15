@@ -70,18 +70,23 @@ const handleToolCalls = async (
 ): Promise<ResponseInputItem.FunctionCallOutput[]> => {
   const results: ResponseInputItem.FunctionCallOutput[] = [];
   for (const item of items) {
-    const toolName = item.name;
-    const toolArgs = JSON.parse(item.arguments);
-
-    console.log(`AI requested tool "${toolName}" with args:`, toolArgs);
-
     let toolResult = "";
-    const toolHandlers = getHandler(tools);
+    try {
+      const toolName = item.name;
+      const toolArgs = JSON.parse(item.arguments);
 
-    if (hasOwnKey(toolHandlers, toolName)) {
-      toolResult = await toolHandlers[toolName](toolArgs);
-    } else {
-      toolResult = `Unknown tool: ${toolName}`;
+      console.log(`AI requested tool "${toolName}" with args:`, toolArgs);
+
+      const toolHandlers = getHandler(tools);
+
+      if (hasOwnKey(toolHandlers, toolName)) {
+        toolResult = await toolHandlers[toolName](toolArgs);
+      } else {
+        toolResult = `Unknown tool: ${toolName}`;
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      toolResult = `Error: ${message}`;
     }
 
     results.push({
