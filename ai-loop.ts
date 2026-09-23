@@ -54,6 +54,13 @@ export const loop = async (messages: ResponseInput) => {
         console.log("AI Response:", textContent.text);
       }
     }
+    console.log({
+      inputToken: response.usage?.input_tokens,
+      outputToken: response.usage?.output_tokens,
+      inputTokenDetails: response.usage?.input_tokens_details,
+      outputTokenDetails: response.usage?.output_tokens_details,
+      totalTokens: response.usage?.total_tokens,
+    });
 
     if (toolCalls.length === 0) {
       break;
@@ -62,6 +69,9 @@ export const loop = async (messages: ResponseInput) => {
 
     const toolResults = await handleToolCalls(toolCalls);
     messages.push(...toolResults);
+
+    // console.log({ messages });
+    prompt("Press any key to continue");
   }
 };
 
